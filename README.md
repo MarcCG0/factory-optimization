@@ -31,3 +31,8 @@ Si no es compleixen les restriccions de `n_e` i `c_e`, hi ha unes penalitzacions
 # Checker
 - Servirà per comprovar que el format de sortida sigui correcte i que la solució tingui el cost que es diu que té
 - Alguns dels costos òptims estan a resultsEasy.txt per comprovar si ho estem fent bé
+
+# Autors
+Ignacio Gris Martín
+Marc Camps Garreta
+UPC GCED Curs 2022-23
