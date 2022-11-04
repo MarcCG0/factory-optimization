@@ -44,31 +44,29 @@ El programa rebrà dos arguments per línia de comandes:
 ## Escriptura en un fitxer
 - Aquest és un exemple d'escriptura en un fitxer (ens interesa doncs se sobreescriu borrant anteriors coses tal i com se'ns demana)
 ```c++
-// basic file operations
+// 
 #include <iostream>
 #include <fstream>
 using namespace std;
-
-int main () {
+  
+  // escriure a fitxer
   ofstream myfile;
   myfile.open ("example.txt");
   myfile << "Writing this to a file.\n";
   myfile.close();
-  return 0;
-}
+
 ````
 
 ## Lectura d'un fitxer
 - Aquest és un exemple de la lectura d'un fitxer 
 
 ```c++
-// reading a text file
+// llegir fitxer
 #include <iostream>
 #include <fstream>
 #include <string>
 using namespace std;
 
-int main () {
   string line;
   ifstream myfile ("example.txt");
   if (myfile.is_open())
@@ -79,11 +77,6 @@ int main () {
     }
     myfile.close();
   }
-
-  else cout << "Unable to open file"; 
-
-  return 0;
-}
 ````
 
 ### Autors
