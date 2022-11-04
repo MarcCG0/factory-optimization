@@ -34,5 +34,6 @@ Si no es compleixen les restriccions de `n_e` i `c_e`, hi ha unes penalitzacions
 
 ### Autors
 - Ignacio Gris Martín
-- Marc Camps Garreta \n
+- Marc Camps Garreta 
+
 *UPC GCED Curs 2022-23*
