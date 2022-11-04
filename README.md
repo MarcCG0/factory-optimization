@@ -33,6 +33,6 @@ Si no es compleixen les restriccions de `n_e` i `c_e`, hi ha unes penalitzacions
 - Alguns dels costos òptims estan a resultsEasy.txt per comprovar si ho estem fent bé
 
 # Autors
-Ignacio Gris Martín
-Marc Camps Garreta
-UPC GCED Curs 2022-23
+-Ignacio Gris Martín
+-Marc Camps Garreta
+*UPC GCED Curs 2022-23*
