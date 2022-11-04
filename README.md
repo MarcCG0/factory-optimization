@@ -58,6 +58,9 @@ int main () {
 }
 ````
 
+## Lectura d'un fitxer
+- Aquest és un exemple de la lectura d'un fitxer 
+
 ### Autors
 - Ignacio Gris Martín
 - Marc Camps Garreta 
