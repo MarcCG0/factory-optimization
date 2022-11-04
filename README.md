@@ -23,7 +23,7 @@ Si no es compleixen les restriccions de `n_e` i `c_e`, hi ha unes penalitzacions
 - `exh.cc` : cerca exhaustiva i sempre sobreescriure la última resposta òptima trobada
 - `greedy.cc` : objectiu: no trobar solució súper òptima, però que sigui ràpid (mig segon en les instàncies més grans)
 - `mh.cc` : (no Basic Local Search !!!), sobreescriure la última resposta òptima trobada
-- 
+
 # Criteris avaluació (2pts)
 - 0.5 pts Llegibilitat del codi i correctesa. 
 - 1.5 pts La qualitat i rapidesa del programa (trobar solucions òptimes ràpid)
