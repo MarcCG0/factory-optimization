@@ -44,7 +44,6 @@ El programa rebrà dos arguments per línia de comandes:
 ## Escriptura en un fitxer
 - Aquest és un exemple d'escriptura en un fitxer (ens interesa doncs se sobreescriu borrant anteriors coses tal i com se'ns demana)
 ```c++
-// 
 #include <iostream>
 #include <fstream>
 using namespace std;
