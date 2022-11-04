@@ -23,6 +23,17 @@ El programa rebrà dos arguments per línia de comandes:
 - el nom de fitxer d'entrada
 - el nom de fitxer de sortida 
 
+## Exemple d'entrada sortida
+
+Entrada:        Sortida:
+10 5 3          3 2.3
+1 1 1 2 1       0 1 0 1 2 0 2 0 2 1 
+2 2 2 3 2
+0 4 1 1 0 0 1
+1 3 0 1 0 1 0
+2 3 0 0 1 0 0
+
+
 ### Entrega
 - Tres arxius: exh.cc, greedy.cc i mh.cc (NO COMPRIMITS)!!!
 - `exh.cc` : cerca exhaustiva i sempre sobreescriure la última resposta òptima trobada
