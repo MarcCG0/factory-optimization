@@ -1,7 +1,7 @@
 ### Pràctica-AP3-Q3-2022
 Aquest és un repositori per anar actualitzant la pràctica d'AP3
 
-### Nomenclatura: 
+## Nomenclatura: 
 - `C` : Nombre de cotxes
 - `M` : Millores
 - `K` : Classes (subconjunt de millores)
