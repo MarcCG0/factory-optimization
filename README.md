@@ -34,7 +34,7 @@ Entrada:        Sortida:
 1 3 0 1 0 1 0
 2 3 0 0 1 0 0
 
-'''
+```
 
 ### Entrega
 - Tres arxius: exh.cc, greedy.cc i mh.cc (NO COMPRIMITS)!!!
