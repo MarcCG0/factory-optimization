@@ -18,11 +18,18 @@ Si no es compleixen les restriccions de `n_e` i `c_e`, hi ha unes penalitzacions
 - `M` enters estrictament majors que zero indicant `n_e` (també per a cada millora)
 - `K` línies i a cada línia: un natural que identifica la classe, un natural que indica el nombre de cotxes a produir d'aquesta classe, i `M` 0's i 1's que indiquen si la classe requereix una millora o no {0...n}
 
+## Entrada: 
+El programa rebrà dos arguments per línia de comandes: 
+- el nom de fitxer d'entrada
+- el nom de fitxer de sortida 
+
 ### Entrega
 - Tres arxius: exh.cc, greedy.cc i mh.cc (NO COMPRIMITS)!!!
 - `exh.cc` : cerca exhaustiva i sempre sobreescriure la última resposta òptima trobada
 - `greedy.cc` : objectiu: no trobar solució súper òptima, però que sigui ràpid (mig segon en les instàncies més grans)
 - `mh.cc` : (no Basic Local Search !!!), sobreescriure la última resposta òptima trobada
+
+*Entrega al racó de la FIB | Deadline 9 de Gener*
 
 # Criteris avaluació (2pts)
 - 0.5 pts Llegibilitat del codi i correctesa. 
