@@ -2,68 +2,85 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 using namespace std;
 
-using extras = vector<int>;
+using upgrades = vector<int>;
 
 struct Input {
     int C;
     int M;
     int K;
-    vector<int> c_e, n_e;
-    map<int, int> prod; // classe i quantitat a produir de la classe
-    map<int, extras> upgr; // classe i vector binari que indica si una classe necesita una certa millora
+    vector<int> c_e;
+    vector<int> n_e;
+    vector<int> prod; // classe i quantitat a produir de la classe
+    vector<vector<int>> upgr; // classe i vector binari que indica si una classe necesita una certa millora
 };
 
-Input read_input()
+Input read_input(const string& a)
 {
-    Input i;
     // Obrim el fitxer i iterem sobre ell
     string line;
-    ifstream myfile("example.txt");
-    getline(myfile, line);
+    ifstream myfile(a);
 
-    // obtenim els tres naturals d'entrada
-    istringstream iss(line);
-    iss >> i.C >> i.M >> i.K;
+    Input i;
 
-    // llegim els M enters c_e
-    getline(myfile, line);
-    int capacity;
-    while (iss >> capacity)
-        i.c_e.push_back(capacity);
+    for (int u = 0; u < 4; ++u) {
+        if (u < 3) {
+            getline(myfile, line);
+            istringstream iss(line);
 
-    // llegim els M enters n_e
-    getline(myfile, line);
-    int qty;
-    while (iss >> qty)
-        i.n_e.push_back(qty);
+            if (u == 0) {
+                // llegim els tres naturals d'entrada
+                iss >> i.C >> i.M >> i.K;
+            }
 
-    // llegim K linies
-    for (int i = 0; i < K; ++i) {
-        getline(myfile, line);
+            if (u == 1) {
+                // llegim els M enters c_e
+                int capacity;
+                while (iss >> capacity) {
+                    i.c_e.push_back(capacity);
+                }
+            }
 
-        // llegim la classe i quantitat a produir
-        int classe, qty_prod;
-        iss >> classe << qty_prod;
-        i.prod[classe] = qty_prod;
-
-        // llegim el vector de millores
-        int extra;
-        extras e;
-        for (int j = 0; j < M; ++j) {
-            iss >> extra;
-            e.push_back(extra);
+            if (u == 2) {
+                // llegim els M enters n_e
+                int qty;
+                while (iss >> qty) {
+                    i.n_e.push_back(qty);
+                }
+            }
         }
-        i.upgr[classe] = e;
+        if (u == 3) {
+            // llegim K linies
+            while (getline(myfile, line)) {
+                istringstream iss1(line);
+
+                // llegim la classe i quantitat a produir
+                int classe,
+                    qty_prod;
+                iss1 >> classe >> qty_prod;
+                i.prod.push_back(qty_prod);
+
+                // llegim el vector de millores
+                int upgrade;
+                upgrades up;
+                for (int j = 0; j < i.M; ++j) {
+                    iss1 >> upgrade;
+                    up.push_back(upgrade);
+                }
+                i.upgr.push_back(up);
+            }
+        }
     }
-    myfile.close();
     return i;
 }
 
-int main()
+int main(int argc, char** argv)
 {
-    Input i = read_input();
+    string f_i = argv[1];
+    string f_o = argv[2];
+    Input i = read_input(f_i);
     const auto& [C, M, K, c_e, n_e, prod, upgr] = i;
 }
