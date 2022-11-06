@@ -1,3 +1,4 @@
+#include <climits>
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -16,15 +17,22 @@ struct Input {
     vector<int> n_e;
     vector<int> prod; // classe i quantitat a produir de la classe
     vector<vector<int>> upgr; // classe i vector binari que indica si una classe necesita una certa millora
+        // a la columna j-essima hi ha els cotxes que necessiten la millora j-essima
 };
 
-Input read_input(const string& a)
+struct Sol {
+    int penalty = INT_MAX;
+    vector<int> permutation;
+    vector<vector<int>> req;
+};
+
+Input read_input(const string& a, Sol& S)
 {
     // Obrim el fitxer i iterem sobre ell
     string line;
     ifstream myfile(a);
 
-    Input i;
+    Input I;
 
     for (int u = 0; u < 4; ++u) {
         if (u < 3) {
@@ -33,14 +41,14 @@ Input read_input(const string& a)
 
             if (u == 0) {
                 // llegim els tres naturals d'entrada
-                iss >> i.C >> i.M >> i.K;
+                iss >> I.C >> I.M >> I.K;
             }
 
             if (u == 1) {
                 // llegim els M enters c_e
                 int capacity;
                 while (iss >> capacity) {
-                    i.c_e.push_back(capacity);
+                    I.c_e.push_back(capacity);
                 }
             }
 
@@ -48,7 +56,7 @@ Input read_input(const string& a)
                 // llegim els M enters n_e
                 int qty;
                 while (iss >> qty) {
-                    i.n_e.push_back(qty);
+                    I.n_e.push_back(qty);
                 }
             }
         }
@@ -61,26 +69,88 @@ Input read_input(const string& a)
                 int classe,
                     qty_prod;
                 iss1 >> classe >> qty_prod;
-                i.prod.push_back(qty_prod);
+                I.prod.push_back(qty_prod);
 
                 // llegim el vector de millores
                 int upgrade;
                 upgrades up;
-                for (int j = 0; j < i.M; ++j) {
+                for (int j = 0; j < I.M; ++j) {
                     iss1 >> upgrade;
                     up.push_back(upgrade);
                 }
-                i.upgr.push_back(up);
+                I.upgr.push_back(up);
             }
         }
     }
-    return i;
+    vector<int> init(I.C, -1);
+    S.permutation = init;
+
+    vector<vector<int>> init1(I.M, vector<int>(I.C, -1));
+    S.req = init1;
+    return I;
+}
+
+int count_penalty(Input& I, Sol& S, vector<int>& s_partial)
+{
+
+    const auto& [C, M, K, c_e, n_e, prod, upgr] = I;
+    auto& [penalty, permutation, req] = S;
+    int count = 0;
+    for (int j = 0; j < M; ++j) {
+        int n_j = n_e[j];
+        int c_j = c_e[j];
+        int pen = -c_j; // si la penalty excedeix en k a 0, significa que la penalty és k.
+        for (int k = 0; k < C; ++k) {
+            pen += req[j][k];
+            if (k >= n_j)
+                pen -= req[j][k - n_j];
+            if (pen > 0)
+                count += pen;
+        }
+
+        // comptar últimes finestres
+        for (uint k = 0; k < n_j; ++k) {
+            pen -= req[j][C - n_j + k];
+            if (pen > 0)
+                count += pen;
+        }
+    }
+    return count;
+}
+
+void opt(Input& I, Sol& S, int k, vector<int>& s_partial)
+{
+    auto& [C, M, K, c_e, n_e, prod, upgr] = I;
+    if (k == C) {
+        int a_pen = count_penalty(I, S, s_partial);
+        if (S.penalty > a_pen) {
+            S.penalty = a_pen;
+            S.permutation = s_partial;
+        }
+    } else {
+        for (uint i = 0; i < K; ++i) {
+            if (prod[i] > 0) {
+                --prod[i];
+                s_partial[k] = i;
+                for (uint j = 0; j < M; ++j)
+                    S.req[j][k] = I.upgr[i][j];
+                opt(I, S, k + 1, s_partial);
+                for (uint j = 0; j < M; ++j)
+                    S.req[j][k] = -1;
+                ++prod[i];
+                s_partial[k] = -1;
+            }
+        }
+    }
 }
 
 int main(int argc, char** argv)
 {
     string f_i = argv[1];
-    string f_o = argv[2];
-    Input i = read_input(f_i);
-    const auto& [C, M, K, c_e, n_e, prod, upgr] = i;
+    //string f_o = argv[2];
+    Sol S;
+    Input I = read_input(f_i, S);
+    vector<int> s_partial(I.C, -1);
+    opt(I, S, 0, s_partial);
+    cout << S.penalty << endl;
 }
