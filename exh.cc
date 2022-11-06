@@ -90,7 +90,7 @@ Input read_input(const string& a, Sol& S)
     return I;
 }
 
-int count_penalty(Input& I, Sol& S, vector<int>& s_partial)
+int count_penalty(Input& I, Sol& S, vector<int>& s_partial, int limit)
 {
 
     const auto& [C, M, K, c_e, n_e, prod, upgr] = I;
@@ -100,7 +100,7 @@ int count_penalty(Input& I, Sol& S, vector<int>& s_partial)
         int n_j = n_e[j];
         int c_j = c_e[j];
         int pen = -c_j; // si la penalty excedeix en k a 0, significa que la penalty és k.
-        for (int k = 0; k < C; ++k) {
+        for (int k = 0; k < limit; ++k) {
             pen += req[j][k];
             if (k >= n_j)
                 pen -= req[j][k - n_j];
@@ -108,11 +108,13 @@ int count_penalty(Input& I, Sol& S, vector<int>& s_partial)
                 count += pen;
         }
 
-        // comptar últimes finestres
-        for (int k = 0; k < n_j; ++k) {
-            pen -= req[j][C - n_j + k];
-            if (pen > 0)
-                count += pen;
+        if (limit == C) {
+            // comptar últimes finestres
+            for (int k = 0; k < n_j; ++k) {
+                pen -= req[j][C - n_j + k];
+                if (pen > 0)
+                    count += pen;
+            }
         }
     }
     return count;
@@ -122,7 +124,7 @@ void opt(Input& I, Sol& S, int k, vector<int>& s_partial)
 {
     auto& [C, M, K, c_e, n_e, prod, upgr] = I;
     if (k == C) {
-        int a_pen = count_penalty(I, S, s_partial);
+        int a_pen = count_penalty(I, S, s_partial, k);
         if (S.penalty > a_pen) {
             S.penalty = a_pen;
             S.permutation = s_partial;
@@ -134,7 +136,9 @@ void opt(Input& I, Sol& S, int k, vector<int>& s_partial)
                 s_partial[k] = i;
                 for (int j = 0; j < M; ++j)
                     S.req[j][k] = I.upgr[i][j];
-                opt(I, S, k + 1, s_partial);
+                int partial_penalty = count_penalty(I, S, s_partial, k);
+                if (partial_penalty < S.penalty)
+                    opt(I, S, k + 1, s_partial);
                 for (int j = 0; j < M; ++j)
                     S.req[j][k] = -1;
                 ++prod[i];
@@ -153,4 +157,7 @@ int main(int argc, char** argv)
     vector<int> s_partial(I.C, -1);
     opt(I, S, 0, s_partial);
     cout << S.penalty << endl;
+    for (int& e : S.permutation)
+        cout << e << " ";
+    cout << endl;
 }
