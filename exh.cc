@@ -109,7 +109,7 @@ int count_penalty(Input& I, Sol& S, vector<int>& s_partial)
         }
 
         // comptar últimes finestres
-        for (uint k = 0; k < n_j; ++k) {
+        for (int k = 0; k < n_j; ++k) {
             pen -= req[j][C - n_j + k];
             if (pen > 0)
                 count += pen;
@@ -128,14 +128,14 @@ void opt(Input& I, Sol& S, int k, vector<int>& s_partial)
             S.permutation = s_partial;
         }
     } else {
-        for (uint i = 0; i < K; ++i) {
+        for (int i = 0; i < K; ++i) {
             if (prod[i] > 0) {
                 --prod[i];
                 s_partial[k] = i;
-                for (uint j = 0; j < M; ++j)
+                for (int j = 0; j < M; ++j)
                     S.req[j][k] = I.upgr[i][j];
                 opt(I, S, k + 1, s_partial);
-                for (uint j = 0; j < M; ++j)
+                for (int j = 0; j < M; ++j)
                     S.req[j][k] = -1;
                 ++prod[i];
                 s_partial[k] = -1;
