@@ -20,6 +20,14 @@ struct Input {
         // a la columna j-essima hi ha els cotxes que necessiten la millora j-essima
 };
 
+/* Explanation of req Matrix
+
+Given a permutation, given (i, j) a position in req
+it contains a 0, we know that the class located in the j-th position of the permutation
+doesn't need upgrade i.
+If it contains a 1, it does need it.
+
+*/
 struct Sol {
     int penalty = INT_MAX;
     vector<int> permutation;
@@ -96,6 +104,7 @@ int count_penalty(Input& I, Sol& S, vector<int>& s_partial, vector<int>& penaliz
     const auto& [C, M, K, c_e, n_e, prod, upgr] = I;
     auto& [penalty, permutation, req] = S;
     int count = 0;
+    // for all stations
     for (int j = 0; j < M; ++j) {
         int n_j = n_e[j];
         int pen_j = penalizations[j];
@@ -114,6 +123,8 @@ void update_penalizations(vector<int>& penalizations, Input& I, Sol& S, int k, i
 {
     auto& [C, M, K, c_e, n_e, prod, upgr] = I;
     auto& [penalty, permutation, req] = S;
+
+    // for all stations, count new penalizations regarding last inserted class
     for (int i = 0; i < M; ++i) {
         int n_i = n_e[i];
         penalizations[i] += req[i][k];
@@ -128,6 +139,8 @@ void restore_penalizations(vector<int>& penalizations, Input& I, Sol& S, int k, 
 {
     auto& [C, M, K, c_e, n_e, prod, upgr] = I;
     auto& [penalty, permutation, req] = S;
+
+    // for all stations, deconstruct changes made to recurse on a certain partial solution
     for (int i = 0; i < M; ++i) {
         if (penalizations[i] > 0)
             partial_penalty -= penalizations[i];
@@ -141,14 +154,12 @@ void restore_penalizations(vector<int>& penalizations, Input& I, Sol& S, int k, 
 void writeIntoFile(const string& f_o, const vector<int>& s_partial, int a_pen)
 {
     ofstream myfile;
+    // open file, write demanded output and close file
     myfile.open(f_o);
-
-    myfile << a_pen << " " << setprecision(1) << float(clock()) / CLOCKS_PER_SEC << endl;
-
+    myfile << a_pen << " " << float(clock()) / CLOCKS_PER_SEC << endl;
     for (int a : s_partial)
         myfile << a << " ";
     myfile << endl;
-
     myfile.close();
 }
 
@@ -180,12 +191,18 @@ void opt(Input& I, Sol& S, int k, vector<int>& s_partial, vector<int>& penalizat
                 --prod[i];
                 s_partial[k] = i;
 
-                // prepare
+                // prepare req for recursion
                 for (int j = 0; j < M; ++j)
                     req[j][k] = upgr[i][j];
+
                 update_penalizations(penalizations, I, S, k, partial_penalty);
+                // if partial solution is potentially a possible optimal solution
+                // recurse on it
+
                 if (partial_penalty < penalty)
                     opt(I, S, k + 1, s_partial, penalizations, partial_penalty, f_o);
+
+                // reconstruct changes
                 restore_penalizations(penalizations, I, S, k, partial_penalty);
                 ++prod[i];
             }
@@ -195,6 +212,7 @@ void opt(Input& I, Sol& S, int k, vector<int>& s_partial, vector<int>& penalizat
 
 int main(int argc, char** argv)
 {
+    // read input in the given format
     string f_i = argv[1];
     string f_o = argv[2];
     Sol S;
@@ -203,10 +221,7 @@ int main(int argc, char** argv)
     vector<int> penalizations(I.M);
     for (int i = 0; i < I.M; ++i)
         penalizations[i] = -I.c_e[i];
-    int partial_penalty = 0;
-    opt(I, S, 0, s_partial, penalizations, partial_penalty, f_o);
-    cout << S.penalty << endl;
-    for (int& e : S.permutation)
-        cout << e << " ";
-    cout << endl;
+
+    // compute optimal solution
+    opt(I, S, 0, s_partial, penalizations, 0, f_o);
 }
