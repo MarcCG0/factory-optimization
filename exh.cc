@@ -98,16 +98,9 @@ int count_penalty(Input& I, Sol& S, vector<int>& s_partial, vector<int>& penaliz
     int count = 0;
     for (int j = 0; j < M; ++j) {
         int n_j = n_e[j];
-        int pen_j = penalizations[j]; // si la penalty excedeix en k a 0, significa que la penalty és k.
-        // for (int k = 0; k < C; ++k) {
-        //     pen += req[j][k];
-        //     if (k >= n_j)
-        //         pen -= req[j][k - n_j];
-        //     if (pen > 0)
-        //         count += pen;
-        // }
+        int pen_j = penalizations[j];
 
-        // comptar últimes finestres
+        // count last windows
         for (int k = 0; k < n_j; ++k) {
             pen_j -= req[j][C - n_j + k];
             if (pen_j > 0)
@@ -129,19 +122,6 @@ void update_penalizations(vector<int>& penalizations, Input& I, Sol& S, int k, i
         if (penalizations[i] > 0)
             partial_penalty += penalizations[i];
     }
-    //     cout << "-------------------" << endl;
-    //     for (int& e : penalizations)
-    //         cout << e << " ";
-    //     cout << endl;
-    //     cout << "Index -> " << k << endl;
-    //     for (vector<int>& v : req) {
-    //         for (int& e : v)
-    //             cout << e << " ";
-    //         cout << endl;
-    //     }
-    //     cout << "Partial Penalty -> " << partial_penalty << endl;
-    //     cout << "-------------------" << endl;
-    // }
 }
 
 void restore_penalizations(vector<int>& penalizations, Input& I, Sol& S, int k, int& partial_penalty)
@@ -158,35 +138,49 @@ void restore_penalizations(vector<int>& penalizations, Input& I, Sol& S, int k, 
     }
 }
 
-void print(vector<int>& s_partial, ofstream& myfile)
+void writeIntoFile(const string& f_o, const vector<int>& s_partial, int a_pen)
 {
+    ofstream myfile;
+    myfile.open(f_o);
+
+    myfile << a_pen << " " << setprecision(1) << float(clock()) / CLOCKS_PER_SEC << endl;
+
     for (int a : s_partial)
         myfile << a << " ";
     myfile << endl;
+
+    myfile.close();
 }
 
 void opt(Input& I, Sol& S, int k, vector<int>& s_partial, vector<int>& penalizations, int partial_penalty, const string& f_o)
 {
     auto& [C, M, K, c_e, n_e, prod, upgr] = I;
     auto& [penalty, permutation, req] = S;
+
+    // check if actual permutation can be optimal in a certain time stamp
     if (k == C) {
+
+        // count last penalizations regarding last windows
         int a_pen = partial_penalty + count_penalty(I, S, s_partial, penalizations);
+
+        // update actual optimal answer
         if (penalty > a_pen) {
             penalty = a_pen;
             permutation = s_partial;
-            // escriure a fitxer
-            ofstream myfile;
-            myfile.open(f_o);
-            myfile << a_pen << " 3.4" << endl;
-            print(s_partial, myfile);
-            myfile.close();
+
+            // write last best answer found
+            writeIntoFile(f_o, s_partial, a_pen);
         }
 
     } else {
         for (int i = 0; i < K; ++i) {
+            // if actual permutation accepts members from class i, try inserting
+            // i on it
             if (prod[i] > 0) {
                 --prod[i];
                 s_partial[k] = i;
+
+                // prepare
                 for (int j = 0; j < M; ++j)
                     req[j][k] = upgr[i][j];
                 update_penalizations(penalizations, I, S, k, partial_penalty);
