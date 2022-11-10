@@ -28,7 +28,7 @@ If it contains a 1, it does need it.
 */
 struct Sol {
     int penalty = INT_MAX;
-    vector<int> permutation;
+    vector<int> permutation = {};
     vector<vector<int>> req;
 };
 
@@ -88,8 +88,6 @@ Input read_input(const string& a, Sol& S)
             }
         }
     }
-    vector<int> init(I.C, -1);
-    S.permutation = init;
 
     vector<vector<int>> init1(I.M, vector<int>(I.C, -1));
     S.req = init1;
@@ -139,12 +137,57 @@ void choose_first_el(vector<int>& permutation, const vector<vector<int>>& R)
         }
     }
     // add that class to the permutation
-    permutation[0] = i_b;
+    permutation.push_back(i_b);
 }
 
-void generate_perm(const vector<vector<int>>& R, vector<int>& permutation, vector<int>& prod, int K)
+int get_longest_window(const Input& I, int classe)
 {
-    int n = permutation.size();
+    // for all station check longest_window
+    int longest_window = 0;
+    for (int i = 0; i < I.M; ++i) {
+        if (I.upgr[classe][i]) {
+            if (longest_window < I.n_e[classe])
+                longest_window = I.n_e[classe];
+        }
+    }
+    return longest_window;
+}
+
+int get_similarity(const Input& I, int classe, int class_i, int upgr)
+{
+    // returns wheter classes classe & class_i both need upgrade upgr
+    if (I.upgr[classe][upgr] == I.upgr[class_i][upgr] && I.upgr[classe][upgr] != 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int get_similarities(const Input& I, const vector<vector<int>>& R, const vector<int>& permutation, int classe)
+{
+    int n = permutation.size(); // # elements already placed
+    const auto& [C, M, K, c_e, n_e, prod, upgr] = I;
+
+    int best_actual = 0;
+
+    int longest_window = get_longest_window(I, classe);
+
+    if (n - longest_window < 0)
+        longest_window = n;
+
+    // for all preceding cars inside class's longest window
+    for (int i = n - longest_window; i < n; ++i) {
+        // for all stations required by class
+        for (int j = 0; j < I.M; ++j) {
+            best_actual += get_similarity(I, classe, permutation[i], j);
+        }
+    }
+    return best_actual;
+}
+
+void generate_perm(Input& I, const vector<vector<int>>& R, vector<int>& permutation, vector<int>& prod, int K)
+{
+    int n = I.C;
 
     choose_first_el(permutation, R);
 
@@ -162,14 +205,16 @@ void generate_perm(const vector<vector<int>>& R, vector<int>& permutation, vecto
             if (prod[j] == 0)
                 continue;
 
-            if (best_k > R[permutation[i - 1]][j]) {
+            int best_actual = get_similarities(I, R, permutation, j);
+
+            if (best_k > best_actual) {
                 index = j;
-                best_k = R[permutation[i - 1]][j];
+                best_k = best_actual;
             }
         }
         // update consequences of having add index to the permutation
         --prod[index];
-        permutation[i] = index;
+        permutation.push_back(index);
     }
 }
 
@@ -233,7 +278,7 @@ void greedy(Sol& S, Input& I, const string& f_o)
     prepare_relations(R, upgr);
 
     // greedy algorithm: generate a decent answer
-    generate_perm(R, permutation, prod, K);
+    generate_perm(I, R, permutation, prod, K);
 
     // prepare counting penalties
     S.req = build_req(S, I);
