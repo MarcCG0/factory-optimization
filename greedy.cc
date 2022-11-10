@@ -140,19 +140,6 @@ void choose_first_el(vector<int>& permutation, const vector<vector<int>>& R)
     permutation.push_back(i_b);
 }
 
-int get_longest_window(const Input& I, int classe)
-{
-    // for all station check longest_window
-    int longest_window = 0;
-    for (int i = 0; i < I.M; ++i) {
-        if (I.upgr[classe][i]) {
-            if (longest_window < I.n_e[classe])
-                longest_window = I.n_e[classe];
-        }
-    }
-    return longest_window;
-}
-
 int get_similarity(const Input& I, int classe, int class_i, int upgr)
 {
     // returns wheter classes classe & class_i both need upgrade upgr
@@ -170,18 +157,17 @@ int get_similarities(const Input& I, const vector<vector<int>>& R, const vector<
 
     int best_actual = 0;
 
-    int longest_window = get_longest_window(I, classe);
+    for (int i = 0; i < M; ++i) {
+        int actual_window = n_e[i];
 
-    if (n - longest_window < 0)
-        longest_window = n;
+        if (n - actual_window < 0)
+            actual_window = n;
 
-    // for all preceding cars inside class's longest window
-    for (int i = n - longest_window; i < n; ++i) {
-        // for all stations required by class
-        for (int j = 0; j < I.M; ++j) {
-            best_actual += get_similarity(I, classe, permutation[i], j);
+        for (int j = n - actual_window; j < n; ++j) {
+            best_actual += get_similarity(I, classe, permutation[j], i);
         }
     }
+
     return best_actual;
 }
 
@@ -243,7 +229,7 @@ int count_penalty(Input& I, Sol& S, vector<int>& s_partial)
         }
 
         // count last window's penalties
-        for (uint k = 0; k < n_j; ++k) {
+        for (int k = 0; k < n_j; ++k) {
             pen -= req[j][C - n_j + k];
             if (pen > 0)
                 count += pen;
