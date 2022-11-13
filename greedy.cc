@@ -183,6 +183,7 @@ void generate_perm(Input& I, const vector<vector<int>>& R, vector<int>& permutat
     for (int i = 1; i < n; ++i) {
         int best_k = INT_MAX;
         int index;
+        int qty_p = -1; // qty left for production
 
         // for all possible classes
         for (int j = 0; j < K; ++j) {
@@ -193,7 +194,8 @@ void generate_perm(Input& I, const vector<vector<int>>& R, vector<int>& permutat
 
             int best_actual = get_similarities(I, R, permutation, j);
 
-            if (best_k > best_actual) {
+            if (best_k > best_actual && prod[j] > qty_p) {
+                qty_p = prod[j];
                 index = j;
                 best_k = best_actual;
             }
