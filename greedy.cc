@@ -104,6 +104,11 @@ void writeIntoFile(const string& f_o, const vector<int>& s_partial, int a_pen)
         myfile << a << " ";
     myfile << endl;
     myfile.close();
+
+    cout << "Penalty is: " << a_pen << endl;
+    for (int a : s_partial)
+        cout << a << " ";
+    cout << endl;
 }
 
 void prepare_relations(vector<vector<int>>& R, const vector<vector<int>>& upgr)
@@ -156,6 +161,7 @@ int get_similarities(const Input& I, const vector<vector<int>>& R, const vector<
     const auto& [C, M, K, c_e, n_e, prod, upgr] = I;
 
     int best_actual = 0;
+    int penalty = 0;
 
     for (int i = 0; i < M; ++i) {
         int actual_window = n_e[i];
@@ -165,10 +171,12 @@ int get_similarities(const Input& I, const vector<vector<int>>& R, const vector<
 
         for (int j = n - actual_window; j < n; ++j) {
             best_actual += get_similarity(I, classe, permutation[j], i);
+            if (best_actual > c_e[i])
+                penalty += 1;
         }
     }
 
-    return best_actual;
+    return penalty;
 }
 
 void generate_perm(Input& I, const vector<vector<int>>& R, vector<int>& permutation, vector<int>& prod, int K)
@@ -181,8 +189,8 @@ void generate_perm(Input& I, const vector<vector<int>>& R, vector<int>& permutat
 
     // for all cars
     for (int i = 1; i < n; ++i) {
-        int best_k = INT_MAX;
         int index;
+        int penalty_min = INT_MAX;
         int qty_p = -1; // qty left for production
 
         // for all possible classes
@@ -192,12 +200,16 @@ void generate_perm(Input& I, const vector<vector<int>>& R, vector<int>& permutat
             if (prod[j] == 0)
                 continue;
 
-            int best_actual = get_similarities(I, R, permutation, j);
+            int penalty = get_similarities(I, R, permutation, j);
 
-            if (best_k > best_actual && prod[j] > qty_p) {
+            if (prod[j] > qty_p) {
                 qty_p = prod[j];
                 index = j;
-                best_k = best_actual;
+                penalty_min = penalty;
+            } else if (prod[j] == qty_p && penalty_min > penalty) {
+                qty_p = prod[j];
+                index = j;
+                penalty_min = penalty;
             }
         }
         // update consequences of having add index to the permutation
