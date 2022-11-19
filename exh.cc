@@ -152,25 +152,25 @@ void writeIntoFile(const string& f_o, const vector<int>& s_partial, int a_pen)
     myfile.close();
 }
 
-int low_bound(Input& I, Sol& S)
+int low_bound(Input& I, Sol& S, int k)
 {
     auto& [C, M, K, c_e, n_e, prod, upgr] = I;
-    int max_1 = -1, max_2 = -1;
-    int c1 = -1;
-    for (int i = 0; i < K; ++i) {
-        if (prod[i] > max_1) {
-            max_2 = max_1;
-            max_1 = prod[i];
-            c1 = i;
-        } else if (prod[i] > max_2) {
-            max_2 = prod[i];
+    int p = 0;
+    int spaces = C - k - 1;
+    for (int i = 0; i < M; ++i) {
+        int uns = 0;
+        int n_i = n_e[i], c_i = c_e[i];
+        for (int j = 0; j < K; ++j) {
+            uns += prod[j] * upgr[j][i];
         }
-    }
+        int zeros = spaces - uns;
+        int perfect_windows = zeros / (n_i - c_i);
 
-    int ups = 0;
-    for (int& e : upgr[c1])
-        ups += e;
-    return max(0, (max_1 - max_2 - 1) * ups);
+        int max_uns = (perfect_windows + 1) * c_i;
+        // Afegir 1 de penalty per cada un de mes
+        p += max(uns - max_uns, 0);
+    }
+    return p;
 }
 
 void opt(Input& I, Sol& S, int k, vector<int>& s_partial, vector<int>& penalizations, int partial_penalty, const string& f_o)
@@ -208,7 +208,7 @@ void opt(Input& I, Sol& S, int k, vector<int>& s_partial, vector<int>& penalizat
                 for (int j = 0; j < M; ++j)
                     req[j][k] = upgr[i][j];
                 update_penalizations(penalizations, I, S, k, partial_penalty);
-                if (partial_penalty + low_bound(I, S) < penalty)
+                if (partial_penalty + low_bound(I, S, k) < penalty)
                     opt(I, S, k + 1, s_partial, penalizations, partial_penalty, f_o);
                 restore_penalizations(penalizations, I, S, k, partial_penalty);
                 ++prod[i];
