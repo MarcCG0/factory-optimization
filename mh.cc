@@ -199,20 +199,19 @@ void writeIntoFile(const string& f_o, const vector<int>& s_partial, int a_pen)
     myfile.close();
 }
 
+// el fet que el vector permutation actui com l'auxiliar i la S.penalty com la menor trobada s'hauria de canviar
+// és un lio si no.
 bool improve(Input& I, Sol& S)
 {
-    vector<int> opt(S.permutation.size());
     int init_p = S.penalty;
-
     for (uint i = 0; i < S.permutation.size(); ++i)
         for (uint j = 0; j < S.permutation.size(); ++j) {
-            if (i != j) {
+            if (i != j && S.permutation[i] != S.permutation[j]) {
                 swap(S.permutation[i], S.permutation[j]);
                 S.req = build_req(S, I);
                 int c_pen = count_penalty(I, S);
                 if (S.penalty > c_pen) {
                     S.penalty = c_pen;
-                    opt = S.permutation;
                 } else {
                     swap(S.permutation[i], S.permutation[j]);
                 }
