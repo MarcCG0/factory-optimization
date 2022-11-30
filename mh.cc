@@ -95,7 +95,7 @@ void generate_perm(Input& I, Sol& S)
 {
     auto& [C, M, K, c_e, n_e, prod, upgr] = I;
     auto& [penalty, permutation, req] = S;
-    int n = C;
+    int n = I.C;
     // for all cars
     for (int i = 0; i < n / 2; ++i) {
         // for all possible classes
@@ -204,29 +204,55 @@ void writeIntoFile(const string& f_o, const vector<int>& s_partial, int a_pen)
 bool improve(Input& I, Sol& S)
 {
     int init_p = S.penalty;
-    for (uint i = 0; i < S.permutation.size(); ++i)
+    for (uint i = 0; i < S.permutation.size(); ++i) {
         for (uint j = 0; j < S.permutation.size(); ++j) {
             if (i != j && S.permutation[i] != S.permutation[j]) {
                 swap(S.permutation[i], S.permutation[j]);
                 S.req = build_req(S, I);
                 int c_pen = count_penalty(I, S);
+
+                int prob = rand() % 100;
                 if (S.penalty > c_pen) {
                     S.penalty = c_pen;
                 } else {
-                    swap(S.permutation[i], S.permutation[j]);
+                    if (prob <= 99)
+                        swap(S.permutation[i], S.permutation[j]);
+                    else
+                        S.penalty = c_pen;
                 }
             }
         }
+    }
     return init_p > S.penalty;
 }
 
-void opt(Input& I, Sol& S, const string& f_o)
+void opt(Input& I, Sol& S, const string& f_o, int& best_penalty, vector<int>& best_perm)
 {
-    generate_perm(I, S);
+    S.req = build_req(S, I);
     S.penalty = count_penalty(I, S);
     while (improve(I, S))
         ;
-    writeIntoFile(f_o, S.permutation, S.penalty);
+    if (S.penalty < best_penalty) {
+        best_perm = S.permutation;
+        best_penalty = S.penalty;
+        writeIntoFile(f_o, best_perm, best_penalty);
+    }
+}
+
+void mh(Input& I, Sol& S, const string& f_o)
+{
+    generate_perm(I, S);
+    int best_penalty = INT_MAX;
+    vector<int> best_perm(I.C, -1);
+    while (true) {
+        int pos1 = rand() % I.C;
+        int pos2 = pos1;
+        while (pos2 == pos1) {
+            pos2 = rand() % I.C; // [0, ..., I.C-1]
+        }
+        opt(I, S, f_o, best_penalty, best_perm);
+        swap(S.permutation[pos1], S.permutation[pos2]); // igual és recomanable, generar una nova seq de 0. (greedy randomitzat).
+    }
 }
 
 int main(int argc, char** argv)
@@ -235,6 +261,5 @@ int main(int argc, char** argv)
     string f_o = argv[2];
     Sol S;
     Input I = read_input(f_i, S);
-    S.req = build_req(S, I);
-    opt(I, S, f_o);
+    mh(I, S, f_o);
 }
