@@ -6,12 +6,24 @@
 #include <vector>
 using namespace std;
 
+/*
+  C, M, K integers containing the respective values of the input.
+  c_e[i] indicates the c_e of class i.
+  n_e[i] indicates the n_e of class i.
+  prod[i] indicates the quantity left to produce of class i.
+  upgr[i][j] indicates whether class i requires upgrade j.
+*/
 struct Input {
     int C, M, K;
     vector<int> c_e, n_e, prod;
     vector<vector<int>> upgr;
 };
-
+/*
+  penalty stores the penalty of the best solution so far.
+  permutation is the best permutation so far.
+  req[i][j] contains a 0 if the class located in the j-th position of
+  the permutation doesn't need upgrade i. Otherwise, it contains a 1.
+*/
 struct Sol {
     int penalty = INT_MAX;
     vector<int> permutation = {};
@@ -20,7 +32,7 @@ struct Sol {
 
 Input readInput(const string& a, Sol& S)
 {
-    // Obrim el fitxer i iterem sobre ell
+    // Open file and iterate through it.
     string line;
     ifstream myfile(a);
     Input I;
@@ -31,12 +43,12 @@ Input readInput(const string& a, Sol& S)
             istringstream iss(line);
 
             if (u == 0) {
-                // llegim els tres naturals d'entrada
+                // Read the three natural numbers cointained in the input.
                 iss >> I.C >> I.M >> I.K;
             }
 
             if (u == 1) {
-                // llegim els M enters c_e
+                // Read the M integers c_e.
                 int capacity;
                 while (iss >> capacity) {
                     I.c_e.push_back(capacity);
@@ -44,7 +56,7 @@ Input readInput(const string& a, Sol& S)
             }
 
             if (u == 2) {
-                // llegim els M enters n_e
+                // Read the M integers n_e.
                 int qty;
                 while (iss >> qty) {
                     I.n_e.push_back(qty);
@@ -52,17 +64,17 @@ Input readInput(const string& a, Sol& S)
             }
         }
         if (u == 3) {
-            // llegim K linies
+            // Read K lines
             while (getline(myfile, line)) {
                 istringstream iss1(line);
 
-                // llegim la classe i quantitat a produir
+                // Read the class and quantity to produce of that class.
                 int classe,
                     qty_prod;
                 iss1 >> classe >> qty_prod;
                 I.prod.push_back(qty_prod);
 
-                // llegim el vector de millores
+                // Fill the upgrade vector.
                 int upgrade;
                 vector<int> up;
                 for (int j = 0; j < I.M; ++j) {
@@ -73,9 +85,8 @@ Input readInput(const string& a, Sol& S)
             }
         }
     }
-
-    vector<vector<int>> init1(I.M, vector<int>(I.C, -1));
-    S.req = init1;
+    // Initialize req matrix.
+    S.req = vector<vector<int>>(I.M, vector<int>(I.C, -1));
     return I;
 }
 
@@ -94,23 +105,35 @@ vector<vector<int>> buildReq(Sol& S, Input& I)
     return v;
 }
 
+/*
+    Writes into the given file the best penalty found until that moment and
+    the permutation that achieves this penalty. It also specifies the time
+    taken to find this particular solution.
+*/
 void writeIntoFile(const string& f_o, const vector<int>& s_partial, int a_pen)
 {
+    // Open the file that we will store our solutions on.
     ofstream myfile;
-    // open file, write demanded output and close file
     myfile.open(f_o);
+    // We write the minimum penalty that we have found and the time
+    // taken to find this penalty.
     myfile << a_pen << " " << float(clock()) / CLOCKS_PER_SEC << endl;
+
+    // Write the corresponding permutation to the optimal solution found
+    // until this precise moment.
     for (int a : s_partial)
         myfile << a << " ";
     myfile << endl;
+    // Close the file.
     myfile.close();
-
-    cout << "Penalty is: " << a_pen << endl;
-    for (int a : s_partial)
-        cout << a << " ";
-    cout << endl;
 }
 
+/*
+   Returns the id of the class that is going to be placed in the first
+   position of the permutation.
+   In order to choose the first element, we simply choose the element
+   that requires more production.
+*/
 int chooseFirstElement(vector<int>& permutation, vector<int>& prod, int K)
 {
     int first_class = -1;
@@ -124,40 +147,34 @@ int chooseFirstElement(vector<int>& permutation, vector<int>& prod, int K)
     return first_class;
 }
 
+/*
+   Returns the penalty that adds up to the total penalty when adding
+   class with id car into the permutation
+*/
 int computePenalty(vector<int>& permutation, Input& I, int car)
 {
-    // cout << "---------------------" << endl;
-
-    // cout << "Current permutation:" << endl;
-    // for (int& i : permutation)
-    //     cout << i << " ";
-    // cout << endl;
-
     // The penalty will be the sum of the penalties for each upgrade
     int assigned = permutation.size();
     int total_penalty = 0;
     for (int i = 0; i < I.M; ++i) {
-        // cout << "   Upgrade " << i << endl;
         // First we compute the maximum size of the windows that we will treat
         int max_window = min(I.n_e[i], assigned + 1);
-        // We have to take into account all the possible windows that can generate a penalty (without regarding futur schedulings)
+        // We have to take into account all the possible windows that can
+        // generate a penalty (without regarding future schedulings)
         int j = 1;
         for (int size = max_window; size > I.c_e[i]; --size) {
-            // cout << "       Window " << j << " of size " << size << ": ";
             int partial_penalty = -I.c_e[i] + I.upgr[car][i];
             for (int pos = assigned - size + 1; pos < assigned; ++pos) {
+                // If it requires that upgrade, then increase penalty
                 if (I.upgr[permutation[pos]][i])
                     ++partial_penalty;
             }
-            // cout << max(0, partial_penalty) << endl;
-            // cout << "       Partial penalty was initialized to: " << -I.c_e[i] + I.upgr[car][i] << endl;
-
+            // If partial penalty is negative, no new penalty has been added.
+            // If it's bigger than 0, we need to add that up
             total_penalty += max(0, partial_penalty);
             ++j;
         }
     }
-    // cout << "Total penalty for class " << car << " is " << total_penalty << endl;
-    // cout << "---------------------" << endl;
     return total_penalty;
 }
 
@@ -203,23 +220,25 @@ void generatePerm(Input& I, vector<int>& permutation, vector<int>& prod, int K)
     }
 }
 
+/*
+   Given a permutation, calculates the total penalty of that permutation
+*/
 int countPenalty(Input& I, Sol& S)
 {
-
     const auto& [C, M, K, c_e, n_e, prod, upgr] = I;
     auto& [penalty, permutation, req] = S;
     int count = 0;
 
-    // for every station (upgrade)
+    // For every station (upgrade)
     for (int j = 0; j < M; ++j) {
         int n_j = n_e[j];
         int c_j = c_e[j];
         int pen = -c_j;
 
-        // for every car
+        // For every car
         for (int k = 0; k < C; ++k) {
 
-            //update penalties
+            // Update penalties
             pen += req[j][k];
             if (k >= n_j)
                 pen -= req[j][k - n_j];
@@ -227,7 +246,7 @@ int countPenalty(Input& I, Sol& S)
                 count += pen;
         }
 
-        // count last window's penalties
+        // Count last window's penalties
         for (int k = 0; k < n_j; ++k) {
             pen -= req[j][C - n_j + k];
             if (pen > 0)
