@@ -112,7 +112,7 @@ void writeIntoFile(const string& f_o, const vector<int>& s_partial, int a_pen)
         We write the minimum penalty that we have found and the time
         taken to find this penalty.
     */
-    my_file << a_pen << " " << float(clock()) / CLOCKS_PER_SEC << endl;
+    my_file << a_pen << " " << setprecision(1) << float(clock()) / CLOCKS_PER_SEC << endl;
 
     /*
         Write the corresponding permutation to the optimal solution found
