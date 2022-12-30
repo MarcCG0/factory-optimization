@@ -272,8 +272,8 @@ void opt(Input& I, Sol& S, int k, vector<int>& s_partial, vector<int>& penalties
                 for (int j = 0; j < M; ++j)
                     req[j][k] = upgr[i][j];
                 /*
-                   Update the penalties regarding the insertion of i in
-                   the permutation.
+                   Update the penalties regarding the 
+                   insertion of i in the permutation.
                 */
                 updatePenalizations(penalties, I, S, k, partial_penalty);
                 /*
