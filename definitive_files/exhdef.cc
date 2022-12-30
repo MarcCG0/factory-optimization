@@ -64,7 +64,7 @@ Input readInput(const string& a, Sol& S)
                 }
             }
         } else {
-            // Read K lines
+            // Read K lines.
             while (getline(myfile, line)) {
                 istringstream iss1(line);
 
