@@ -34,12 +34,12 @@ Input readInput(const string& a, Sol& S)
 {
     // Open file and iterate through it.
     string line;
-    ifstream myfile(a);
+    ifstream my_file(a);
     Input I;
 
     for (int u = 0; u < 4; ++u) {
         if (u < 3) {
-            getline(myfile, line);
+            getline(my_file, line);
             istringstream iss(line);
 
             if (u == 0) {
@@ -65,13 +65,12 @@ Input readInput(const string& a, Sol& S)
         }
         if (u == 3) {
             // Read K lines
-            while (getline(myfile, line)) {
+            while (getline(my_file, line)) {
                 istringstream iss1(line);
 
                 // Read the class and quantity to produce of that class.
-                int classe,
-                    qty_prod;
-                iss1 >> classe >> qty_prod;
+                int c, qty_prod;
+                iss1 >> c >> qty_prod;
                 I.prod.push_back(qty_prod);
 
                 // Fill the upgrade vector.
@@ -105,31 +104,26 @@ vector<vector<int>> buildReq(Sol& S, Input& I)
     return v;
 }
 
-/*
-    Writes into the given file the best penalty found until that moment and
-    the permutation that achieves this penalty. It also specifies the time
-    taken to find this particular solution.
-*/
 void writeIntoFile(const string& f_o, const vector<int>& s_partial, int a_pen)
 {
     // Open the file that we will store our solutions on.
-    ofstream myfile;
-    myfile.open(f_o);
-    /*  
+    ofstream my_file;
+    my_file.open(f_o);
+    /*
         We write the minimum penalty that we have found and the time
         taken to find this penalty.
     */
-    myfile << a_pen << " " << float(clock()) / CLOCKS_PER_SEC << endl;
-  
+    my_file << a_pen << " " << float(clock()) / CLOCKS_PER_SEC << endl;
+
     /*
         Write the corresponding permutation to the optimal solution found
         until this precise moment.
-    */ 
+    */
     for (int a : s_partial)
-        myfile << a << " ";
-    myfile << endl;
+        my_file << a << " ";
+    my_file << endl;
     // Close the file.
-    myfile.close();
+    my_file.close();
 }
 
 /*
@@ -163,8 +157,10 @@ int computePenalty(vector<int>& permutation, Input& I, int car)
     for (int i = 0; i < I.M; ++i) {
         // First we compute the maximum size of the windows that we will treat
         int max_window = min(I.n_e[i], assigned + 1);
-        // We have to take into account all the possible windows that can
-        // generate a penalty (without regarding future schedulings)
+        /*
+           We have to take into account all the possible windows that can
+           generate a penalty (without regarding future schedulings)
+        */
         int j = 1;
         for (int size = max_window; size > I.c_e[i]; --size) {
             int partial_penalty = -I.c_e[i] + I.upgr[car][i];
@@ -173,8 +169,10 @@ int computePenalty(vector<int>& permutation, Input& I, int car)
                 if (I.upgr[permutation[pos]][i])
                     ++partial_penalty;
             }
-            // If partial penalty is negative, no new penalty has been added.
-            // If it's bigger than 0, we need to add that up
+            /*
+               If partial penalty is negative, no new penalty has been added.
+               If it's bigger than 0, we need to add that up
+            */
             total_penalty += max(0, partial_penalty);
             ++j;
         }
@@ -196,18 +194,25 @@ void generatePerm(Input& I, vector<int>& permutation, vector<int>& prod, int K)
         int min_penalty = INT_MAX;
         int best_class = -1;
 
-        // We compare the penalty that would generate scheduling each class to the actual position
+        /*
+           We compare the penalty that would generate scheduling
+           each class to the actual position
+        */
         for (int car = 0; car < I.K; ++car) {
             // If there are no more cars to produce, skip
             if (prod[car] == 0)
                 continue;
-
-            // We compute the penalty that this class would generate given the previous assignments
+            /*
+               We compute the penalty that this class would generate
+               given the previous assignments
+            */
             int penalty_class = computePenalty(permutation, I, car);
             int actual_class = car;
 
-            // We update the variables in case it is necessary
-            // When we have found a class which minimizes the penalty even more
+            /*
+               We update the variables in case it is necessary that is when
+               we find a class which minimizes the penalty even more
+            */
             if (penalty_class < min_penalty) {
                 min_penalty = penalty_class;
                 best_class = actual_class;
@@ -219,6 +224,7 @@ void generatePerm(Input& I, vector<int>& permutation, vector<int>& prod, int K)
             }
         }
 
+        // We assign the actual position to the best class found
         permutation.push_back(best_class);
         --prod[best_class];
     }
