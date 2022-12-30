@@ -312,7 +312,7 @@ int main(int argc, char** argv)
     vector<int> penalties(I.M);
     for (int i = 0; i < I.M; ++i)
         penalties[i] = -I.c_e[i];
-
+  
     // Compute optimal permutation and its respective penalty.
     opt(I, S, 0, s_partial, penalties, 0, f_o);
 }
