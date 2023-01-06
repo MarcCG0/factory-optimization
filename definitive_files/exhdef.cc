@@ -1,3 +1,5 @@
+// Marc Camps i Ignacio Gris
+
 #include <climits>
 #include <cstring>
 #include <fstream>
