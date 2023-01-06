@@ -166,11 +166,13 @@ void writeIntoFile(const string& f_o, const vector<int>& s_partial, int a_pen)
     // Open the file that we will store our solutions on.
     ofstream my_file;
     my_file.open(f_o);
+    my_file.setf(ios::fixed);
+    my_file.precision(1);
     /*
        We write the minimum penalty that we have found and the time
        taken to find the solution with this penalty.
     */
-    my_file << a_pen << " " << setprecision(1) << float(clock()) / CLOCKS_PER_SEC << endl;
+    my_file << a_pen << " " << float(clock()) / CLOCKS_PER_SEC << endl;
     /*
        Write the corresponding permutation to the optimal solution found
        until this precise moment.
@@ -272,7 +274,7 @@ void opt(Input& I, Sol& S, int k, vector<int>& s_partial, vector<int>& penalties
                 for (int j = 0; j < M; ++j)
                     req[j][k] = upgr[i][j];
                 /*
-                   Update the penalties regarding the 
+                   Update the penalties regarding the
                    insertion of i in the permutation.
                 */
                 updatePenalizations(penalties, I, S, k, partial_penalty);
@@ -312,7 +314,7 @@ int main(int argc, char** argv)
     vector<int> penalties(I.M);
     for (int i = 0; i < I.M; ++i)
         penalties[i] = -I.c_e[i];
-  
+
     // Compute optimal permutation and its respective penalty.
     opt(I, S, 0, s_partial, penalties, 0, f_o);
 }
