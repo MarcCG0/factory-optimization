@@ -289,7 +289,7 @@ void greedy(Sol& S, Input& I, const string& f_o)
 
 int main(int argc, char** argv)
 {
-    // Read the input ib the given format.
+    // Read the input in the given format.
     string f_i = argv[1];
     string f_o = argv[2];
     Sol S;
