@@ -1,3 +1,5 @@
+// Marc Camps i Ignacio Gris
+
 #include <algorithm>
 #include <climits>
 #include <cstring>
