@@ -1,10 +1,10 @@
+#include <algorithm>
 #include <climits>
 #include <cstring>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <vector>
-#include <algorithm>
 using namespace std;
 
 /*
@@ -250,22 +250,24 @@ int countPenalty(Input& I, Sol& S)
 void writeIntoFile(const string& f_o, const vector<int>& s_partial, int a_pen)
 {
     // Open the file that we will store our solutions on.
-    ofstream myfile;
-    myfile.open(f_o);
+    ofstream my_file;
+    my_file.open(f_o);
+    my_file.setf(ios::fixed);
+    my_file.precision(1);
     /*
        We write the minimum penalty that we have found and the time
        taken to find this penalty.
     */
-    myfile << a_pen << " " << setprecision(1) << float(clock()) / CLOCKS_PER_SEC << endl;
+    my_file << a_pen << " " << float(clock()) / CLOCKS_PER_SEC << endl;
     /*
        Write the corresponding permutation to the optimal solution found
        until this precise moment.
     */
     for (int a : s_partial)
-        myfile << a << " ";
-    myfile << endl;
+        my_file << a << " ";
+    my_file << endl;
     // Close the file.
-    myfile.close();
+    my_file.close();
 }
 /*
     Returns whether a solution is upgradeable.
@@ -314,7 +316,8 @@ void opt(Input& I, Sol& S, const string& f_o, int& best_penalty,
        We keep improving the distribution by permutations until no
        no improvement can be done.
     */
-    while (improve(I, S));
+    while (improve(I, S))
+        ;
     // We update the best penalty and permutation when necessary.
     if (S.penalty < best_penalty) {
         best_perm = S.permutation;
