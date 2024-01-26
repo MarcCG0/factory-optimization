@@ -1,32 +1,32 @@
-### Pràctica-AP3-Q3-2022
-Aquest és un repositori per anar actualitzant la pràctica d'AP3
+# Optimization in Car Factory Production
 
-## Nomenclatura: 
-- `C` : Nombre de cotxes
-- `M` : Millores
-- `K` : Classes (subconjunt de millores)
-- `n_e`: Conjunt de n cotxes consecutius a la estació `e`
-- `c_e`: Com a molt `c_e` dels `n_e` poden requerir l'instal·lació de la millora
+This repository is dedicated to the ongoing development of a practice project for AP3. The project involves the creation of optimization algorithms, including backtracking, greedy algorithms, and metaheuristic approaches, aimed at enhancing the efficiency of production processes in car factories.
 
-## Penalització
-Si no es compleixen les restriccions de `n_e` i `c_e`, hi ha unes penalitzacions. La penalització total s'obte sumant les penalitzacions de totes les estacions. Si s'excedeix `c_e`, la penalització és de `k-c_e` euros, on `k` no és res més que la quantitat de cotxes consecutius que han requerit la millora i han excedit el màxim permès en aquella estació. 
-- Nota: les finestres incompletes de cotxes també es tenen en compte (inici i final de la seqüència). 
+## Nomenclature:
+- `C`: Number of cars
+- `M`: Improvements
+- `K`: Classes (subset of improvements)
+- `n_e`: Set of `n` consecutive cars at station `e`
+- `c_e`: At most `c_e` of the `n_e` require the installation of the improvement
 
-## Format d'entrada: 
-- 3 naturals estrictament majors que zero: `C, M, K`. Nombre de cotxes, millores i classes. 
-- `M` enters estrictament majors que zero amb la `c_e` de cada millora (es millores tenen per nom nombres {0...n} i totes es fan en estacions diferents). 
-- `M` enters estrictament majors que zero indicant `n_e` (també per a cada millora)
-- `K` línies i a cada línia: un natural que identifica la classe, un natural que indica el nombre de cotxes a produir d'aquesta classe, i `M` 0's i 1's que indiquen si la classe requereix una millora o no {0...n}
+## Penalties:
+Non-compliance with `n_e` and `c_e` constraints results in penalties. The total penalty is the sum of the penalties from all stations. Exceeding `c_e` incurs a penalty of `k-c_e` euros, where `k` is the number of consecutive cars that required the improvement and exceeded the allowed maximum at that station.
+- Note: Incomplete car windows (start and end of the sequence) are also considered.
 
-## Entrada: 
-El programa rebrà dos arguments per línia de comandes: 
-- el nom de fitxer d'entrada
-- el nom de fitxer de sortida 
+## Input Format:
+- 3 strictly positive integers: `C, M, K`. Number of cars, improvements, and classes.
+- `M` strictly positive integers with the `c_e` for each improvement (improvements are named {0...n} and are made at different stations).
+- `M` strictly positive integers indicating `n_e` (also for each improvement)
+- `K` lines, each containing: an integer identifying the class, an integer indicating the number of cars to produce in this class, and `M` 0s and 1s indicating whether the class requires an improvement or not {0...n}
 
-## Exemple d'entrada sortida
+## Input:
+The program will receive two command-line arguments: 
+- the name of the input file
+- the name of the output file
 
+## Example of Input and Output
 ```
-Entrada:        Sortida:
+Input:          Output:
 10 5 3          3 2.3
 1 1 1 2 1       0 1 0 1 2 0 2 0 2 1 
 2 2 2 3 2
@@ -35,64 +35,6 @@ Entrada:        Sortida:
 2 3 0 0 1 0 0
 
 ```
-
-### Entrega
-- Tres arxius: exh.cc, greedy.cc i mh.cc (NO COMPRIMITS)!!!
-- `exh.cc` : cerca exhaustiva i sempre sobreescriure la última resposta òptima trobada
-- `greedy.cc` : objectiu: no trobar solució súper òptima, però que sigui ràpid (mig segon en les instàncies més grans)
-- `mh.cc` : (no Basic Local Search !!!), sobreescriure la última resposta òptima trobada
-
-*Entrega al racó de la FIB | Deadline 9 de Gener*
-
-# Criteris avaluació (2pts)
-- 0.5 pts Llegibilitat del codi i correctesa. 
-- 1.5 pts La qualitat i rapidesa del programa (trobar solucions òptimes ràpid)
-
-# Checker
-- Servirà per comprovar que el format de sortida sigui correcte i que la solució tingui el cost que es diu que té
-- Alguns dels costos òptims estan a resultsEasy.txt per comprovar si ho estem fent bé
-
-
-### Funcions C++
-## Escriptura en un fitxer
-- Aquest és un exemple d'escriptura en un fitxer (ens interesa doncs se sobreescriu borrant anteriors coses tal i com se'ns demana)
-```c++
-#include <iostream>
-#include <fstream>
-using namespace std;
-  
-  // escriure a fitxer
-  ofstream myfile;
-  myfile.open ("example.txt");
-  myfile << "Writing this to a file.\n";
-  myfile.close();
-
-````
-
-## Lectura d'un fitxer
-- Aquest és un exemple de la lectura d'un fitxer 
-
-```c++
-// llegir fitxer
-#include <iostream>
-#include <fstream>
-#include <string>
-using namespace std;
-
-  string line;
-  ifstream myfile ("example.txt");
-  if (myfile.is_open())
-  {
-    while ( getline (myfile,line) )
-    {
-      cout << line << '\n';
-    }
-    myfile.close();
-  }
-````
-
-### Autors
+### Authors
 - Ignacio Gris Martín
 - Marc Camps Garreta 
-
-*UPC GCED Curs 2022-23*
