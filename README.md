@@ -1,6 +1,5 @@
 # Optimization in Car Factory Production
-
-This repository is dedicated to the ongoing development of a practice project for AP3. The project involves the creation of optimization algorithms, including backtracking, greedy algorithms, and metaheuristic approaches, aimed at enhancing the efficiency of production processes in car factories.
+The project involves the creation of optimization algorithms, including backtracking, greedy algorithms, and metaheuristic approaches, aimed at enhancing the efficiency of production processes in car factories.
 
 ## Nomenclature:
 - `C`: Number of cars
