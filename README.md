@@ -2,7 +2,7 @@
 The project involves the creation of optimization algorithms, including backtracking, greedy algorithms, and metaheuristic approaches, aimed at enhancing the efficiency of production processes in car factories.
 
 
-![Alt text]([URL_or_path_to_image](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Metaheuristics_classification.svg/630px-Metaheuristics_classification.svg.png) "Optional title")
+![Alt text](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Metaheuristics_classification.svg/630px-Metaheuristics_classification.svg.png "Optional title")
 
 
 ## Nomenclature:
